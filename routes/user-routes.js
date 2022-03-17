@@ -1,7 +1,6 @@
 const express = require("express");
-const { validationResult, check } = require("express-validator");
+const { check } = require("express-validator");
 const { signup, login } = require("../controllers/user-controller");
-const HttpError = require("../models/http-error");
 
 const router = express.Router();
 
@@ -14,14 +13,18 @@ router.post(
   [
     check("firstName").not().isEmpty(),
     check("lastName").not().isEmpty(),
-    check("email").normalizeEmail().isEmail(),
+    check("email").normalizeEmail({ gmail_remove_dots: false }).isEmail(),
     check("profileImage").not().isEmpty(),
     check("password").isLength({ min: 7 }),
   ],
   signup
 );
 
-router.post("/login", login);
+router.post(
+  "/login",
+  [check("email").normalizeEmail({ gmail_remove_dots: false }).isEmail()],
+  login
+);
 
 // router.get("/", (req, res, next) => {});
 
