@@ -39,7 +39,7 @@ const signup = async (req, res, next) => {
   console.log("existing user ", existingUser);
 
   if (existingUser) {
-    const error = new HttpError("User already exists, try logging in");
+    const error = new HttpError("User already exists, try logging in", 404);
     return next(error);
   }
 
@@ -68,7 +68,7 @@ const login = async (req, res, next) => {
   }
 
   if (!existingUser) {
-    const error = new HttpError("Email does not exist, try signing up", 401);
+    const error = new HttpError("Email does not exist, try signing up", 404);
     return next(error);
   }
 
@@ -91,4 +91,37 @@ const login = async (req, res, next) => {
   res.status(200).json({ message: `logged in with ${email}` });
 };
 
-module.exports = { signup, login };
+const editUser = async (req, res, next) => {
+  const userId = res.params.uid;
+
+  const { firstName, lastName, profileImage } = req.body;
+
+  let user;
+  try {
+    user = await findOne({ id: userId });
+  } catch (err) {
+    const error = new HttpError(
+      "Could not update profile, please try again",
+      500
+    );
+    return next(error);
+  }
+
+  user.firstName = firstName;
+  user.lastName = lastName;
+  user.profileImage = profileImage;
+
+  try {
+    await user.save();
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not update profile ",
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ user: user.toObject({ getters: true }) });
+};
+
+module.exports = { signup, login, editUser };

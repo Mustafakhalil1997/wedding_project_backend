@@ -1,6 +1,6 @@
 const express = require("express");
 const { check } = require("express-validator");
-const { signup, login } = require("../controllers/user-controller");
+const { signup, login, editUser } = require("../controllers/user-controller");
 
 const router = express.Router();
 
@@ -25,6 +25,8 @@ router.post(
   [check("email").normalizeEmail({ gmail_remove_dots: false }).isEmail()],
   login
 );
+
+router.patch("/:uid", editUser);
 
 // router.get("/", (req, res, next) => {});
 
