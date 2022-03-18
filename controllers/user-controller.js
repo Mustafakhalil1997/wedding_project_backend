@@ -92,13 +92,22 @@ const login = async (req, res, next) => {
 };
 
 const editUser = async (req, res, next) => {
-  const userId = res.params.uid;
+  const userId = req.params.uid;
 
-  const { firstName, lastName, profileImage } = req.body;
+  const {
+    firstName,
+    lastName,
+    email,
+    password,
+    // profileImage,
+    // favorites,
+    // hallId,
+    // booking,
+  } = req.body;
 
   let user;
   try {
-    user = await findOne({ id: userId });
+    user = await User.findOne({ email: email });
   } catch (err) {
     const error = new HttpError(
       "Could not update profile, please try again",
@@ -109,7 +118,7 @@ const editUser = async (req, res, next) => {
 
   user.firstName = firstName;
   user.lastName = lastName;
-  user.profileImage = profileImage;
+  // user.profileImage = profileImage;
 
   try {
     await user.save();
@@ -121,7 +130,12 @@ const editUser = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(200).json({ user: user.toObject({ getters: true }) });
+  res
+    .status(200)
+    .json({
+      user: user.toObject({ getters: true }),
+      message: "Profile Updated!",
+    });
 };
 
 module.exports = { signup, login, editUser };
