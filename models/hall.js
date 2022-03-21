@@ -10,9 +10,9 @@ const hallSchema = new Schema({
     lat: { type: Number, required: true },
     lng: { type: String, required: true },
   },
-  images: [{ type: String }],
-  bookings: [{ type: Date }],
-  ownerId: { type: mongoose.Types.ObjectId },
+  images: [{ type: String, required: true }],
+  bookings: [{ type: Date, required: true }],
+  ownerId: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
 });
 
 module.exports = mongoose.model("Hall", hallSchema); // this will later be the name of the collection in the database( but with lowercase and plural)
