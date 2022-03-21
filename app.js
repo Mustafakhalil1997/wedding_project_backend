@@ -1,5 +1,8 @@
 require("dotenv").config();
 
+const fs = require("fs");
+const path = require("path");
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -16,6 +19,8 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use(cors());
+
+app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
 app.use("/api/user", userRoutes);
 
@@ -35,6 +40,12 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
+  if (req.file) {
+    // delete uploaded image if there is an error
+    fs.unlink(req.file.path, (err) => {
+      console.log(err);
+    });
+  }
   if (res.headerSent) {
     return next(error);
   }
