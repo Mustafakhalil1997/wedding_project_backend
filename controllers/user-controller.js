@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const URL = require("./../helpers/url");
 const HttpError = require("../models/http-error");
 const { findOne } = require("../models/user");
 
@@ -88,12 +89,23 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(200).json({ message: `logged in with ${email}` });
+  res.status(200).json({
+    message: `logged in with ${email}`,
+    userInfo: existingUser.toObject({ getters: true }),
+  });
 };
 
 const editUser = async (req, res, next) => {
+  const errors = validationResult(req);
+  console.log("reached signup");
+  console.log("req.file ", req.file);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data", 422)
+    );
+  }
   const userId = req.params.uid;
-
+  console.log("req.bdoy ", req.body);
   const {
     firstName,
     lastName,
@@ -118,7 +130,10 @@ const editUser = async (req, res, next) => {
 
   user.firstName = firstName;
   user.lastName = lastName;
-  // user.profileImage = profileImage;
+  if (req.file && req.file.path) {
+    user.profileImage = req.file.path;
+  }
+  console.log("user ", user);
 
   try {
     await user.save();
@@ -130,12 +145,10 @@ const editUser = async (req, res, next) => {
     return next(error);
   }
 
-  res
-    .status(200)
-    .json({
-      user: user.toObject({ getters: true }),
-      message: "Profile Updated!",
-    });
+  res.status(200).json({
+    user: user.toObject({ getters: true }),
+    message: "Profile Updated!",
+  });
 };
 
 module.exports = { signup, login, editUser };

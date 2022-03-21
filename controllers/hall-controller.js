@@ -10,7 +10,7 @@ const createHall = async (req, res, next) => {
     email,
     address,
     location,
-    images,
+    images: [],
     bookings: [],
     ownerId: userId,
   });
