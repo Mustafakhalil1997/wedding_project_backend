@@ -1,6 +1,7 @@
 const express = require("express");
 const { check } = require("express-validator");
 const { signup, login, editUser } = require("../controllers/user-controller");
+const fileUpload = require("../middleware/file-upload");
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.post(
     check("firstName").not().isEmpty(),
     check("lastName").not().isEmpty(),
     check("email").normalizeEmail({ gmail_remove_dots: false }).isEmail(),
-    check("profileImage").not().isEmpty(),
+    // check("profileImage").not().isEmpty(),
     check("password").isLength({ min: 7 }),
   ],
   signup
@@ -26,7 +27,16 @@ router.post(
   login
 );
 
-router.patch("/:uid", editUser);
+router.patch(
+  "/:uid",
+  fileUpload.single("profileImage"),
+  [
+    check("firstName").not().isEmpty(),
+    check("lastName").not().isEmpty(),
+    check("email").normalizeEmail({ gmail_remove_dots: false }).isEmail(),
+  ],
+  editUser
+);
 
 // router.get("/", (req, res, next) => {});
 
