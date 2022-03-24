@@ -98,7 +98,7 @@ const login = async (req, res, next) => {
 const editUser = async (req, res, next) => {
   const errors = validationResult(req);
   console.log("reached signup");
-  console.log("req.file ", req.file);
+  console.log("req ", req);
   console.log("errors ", errors);
 
   if (!errors.isEmpty()) {
