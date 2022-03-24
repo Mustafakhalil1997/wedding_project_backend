@@ -99,6 +99,8 @@ const editUser = async (req, res, next) => {
   const errors = validationResult(req);
   console.log("reached signup");
   console.log("req.file ", req.file);
+  console.log("errors ", errors);
+
   if (!errors.isEmpty()) {
     return next(
       new HttpError("Invalid inputs passed, please check your data", 422)
