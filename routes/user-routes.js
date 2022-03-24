@@ -1,6 +1,11 @@
 const express = require("express");
 const { check } = require("express-validator");
-const { signup, login, editUser } = require("../controllers/user-controller");
+const {
+  signup,
+  login,
+  editUser,
+  addImage,
+} = require("../controllers/user-controller");
 const fileUpload = require("../middleware/file-upload");
 
 const router = express.Router();
@@ -28,7 +33,6 @@ router.post(
 
 router.patch(
   "/:uid",
-  fileUpload.single("profileImage"),
   [
     check("firstName").not().isEmpty(),
     check("lastName").not().isEmpty(),
@@ -36,6 +40,8 @@ router.patch(
   ],
   editUser
 );
+
+router.patch("/:uid/addImage", fileUpload.single("profileImage"), addImage);
 
 // router.get("/", (req, res, next) => {});
 

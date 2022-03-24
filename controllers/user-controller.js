@@ -1,7 +1,7 @@
 const { validationResult } = require("express-validator");
 const URL = require("./../helpers/url");
 const HttpError = require("../models/http-error");
-const { findOne } = require("../models/user");
+// const { findOne } = require("../models/user");
 
 const User = require("../models/user");
 
@@ -130,9 +130,9 @@ const editUser = async (req, res, next) => {
 
   user.firstName = firstName;
   user.lastName = lastName;
-  if (req.file && req.file.path) {
-    user.profileImage = req.file.path;
-  }
+  // if (req.file && req.file.path) {
+  //   user.profileImage = req.file.path;
+  // }
   console.log("user ", user);
 
   try {
@@ -151,4 +151,32 @@ const editUser = async (req, res, next) => {
   });
 };
 
-module.exports = { signup, login, editUser };
+const addImage = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  let user;
+  try {
+    user = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError(
+      "Could not update profile, please try again",
+      500
+    );
+    return next(error);
+  }
+  user.profileImage = req.file.path;
+
+  try {
+    await user.save();
+  } catch (err) {
+    const error = new HttpError(
+      "Could not update profile, please try again",
+      500
+    );
+    return next(error);
+  }
+
+  res.json({ message: "Image uploaded successfully" });
+};
+
+module.exports = { signup, login, editUser, addImage };
