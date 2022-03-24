@@ -31,8 +31,6 @@ router.post(
   login
 );
 
-router.patch("/:uid/addImage", fileUpload.single("profileImage"), addImage);
-
 router.patch(
   "/:uid",
   [
@@ -42,6 +40,8 @@ router.patch(
   ],
   editUser
 );
+
+router.patch("/:uid/addImage", fileUpload.single("profileImage"), addImage);
 
 // router.get("/", (req, res, next) => {});
 
