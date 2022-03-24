@@ -15,6 +15,7 @@ const res = require("express/lib/response");
 const connectDB = require("./db/connect");
 
 const app = express();
+const server = require("http").Server(app);
 
 app.use(bodyParser.json());
 
@@ -60,7 +61,7 @@ const url = process.env.MONGO_URI;
 const start = async () => {
   try {
     await connectDB(url);
-    app.listen(port, (req, res) => {
+    server.listen(port, (req, res) => {
       console.log(`Server is listening on port ${port}`);
     });
   } catch (error) {
