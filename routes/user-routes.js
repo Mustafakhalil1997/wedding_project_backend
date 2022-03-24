@@ -6,6 +6,7 @@ const {
   editUser,
   addImage,
 } = require("../controllers/user-controller");
+const checkAuth = require("../middleware/check-auth");
 const fileUpload = require("../middleware/file-upload");
 
 const router = express.Router();
@@ -30,6 +31,8 @@ router.post(
   [check("email").normalizeEmail({ gmail_remove_dots: false }).isEmail()],
   login
 );
+
+router.use(checkAuth);
 
 router.patch("/addImage/:uid", fileUpload.single("profileImage"), addImage);
 
