@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const HttpError = require("../models/http-error");
 // const { findOne } = require("../models/user");
 
@@ -17,7 +18,7 @@ const signup = async (req, res, next) => {
 
   console.log("req.body ", req.body);
 
-  const { id, firstName, lastName, email, password, profileImage } = req.body;
+  const { firstName, lastName, email, password, profileImage } = req.body;
 
   let existingUser;
   try {
@@ -61,7 +62,31 @@ const signup = async (req, res, next) => {
     return next(error);
   }
   console.log("user Created");
-  res.status(200).json({ message: "signed up" });
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: createdUser.id, email: createdUser.email },
+      "super_secret_dont_share",
+      { expiresIn: "1h" }
+    );
+  } catch (err) {
+    const error = new HttpError("Signing up failed, please try again.", 500);
+    return next(error);
+  }
+
+  const user = {
+    id: createdUser.id,
+    firstName,
+    lastName,
+    email,
+    profileImage,
+    favorites: [],
+    hallId: null,
+    booking: null,
+    password: password, // to be removed later
+  };
+
+  res.status(200).json({ userInfo: user, token: token, message: "signed up" });
 };
 
 const login = async (req, res, next) => {
@@ -96,9 +121,34 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: existingUser.id, email: existingUser.email },
+      "super_secret_dont_share",
+      { expiresIn: "1h" }
+    );
+  } catch (err) {
+    const error = new HttpError("Signing up failed, please try again.t", 500);
+    return next(error);
+  }
+
+  const user = {
+    id: existingUser.id,
+    firstName: existingUser.firstName,
+    lastName: existingUser.lastName,
+    email: existingUser.email,
+    profileImage: existingUser.profileImage,
+    favorites: existingUser.favorites,
+    hallId: existingUser.hallId,
+    booking: existingUser.booking,
+    password: password, // to be removed later
+  };
+
   res.status(200).json({
     message: `logged in with ${email}`,
-    userInfo: existingUser.toObject({ getters: true }),
+    userInfo: user.toObject({ getters: true }),
+    token: token,
   });
 };
 
