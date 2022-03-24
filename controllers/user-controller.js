@@ -156,6 +156,8 @@ const editUser = async (req, res, next) => {
 const addImage = async (req, res, next) => {
   const userId = req.params.uid;
 
+  console.log("req.file ", req.file);
+
   let user;
   try {
     user = await User.findById(userId);
