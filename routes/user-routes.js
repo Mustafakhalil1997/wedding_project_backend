@@ -40,7 +40,6 @@ router.patch(
   "/:uid",
   [
     check("firstName").not().isEmpty(),
-    check("lastName").not().isEmpty(),
     check("email").normalizeEmail({ gmail_remove_dots: false }).isEmail(),
   ],
   editUser
