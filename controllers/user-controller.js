@@ -147,7 +147,7 @@ const login = async (req, res, next) => {
 
   res.status(200).json({
     message: `logged in with ${email}`,
-    userInfo: user.toObject({ getters: true }),
+    userInfo: user,
     token: token,
   });
 };
