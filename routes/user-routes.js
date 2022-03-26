@@ -32,7 +32,7 @@ router.post(
   login
 );
 
-// router.use(checkAuth);
+router.use(checkAuth);
 
 router.patch("/addImage/:uid", fileUpload.single("profileImage"), addImage);
 
