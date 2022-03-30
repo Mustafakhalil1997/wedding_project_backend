@@ -3,19 +3,21 @@ const Hall = require("../models/hall");
 const HttpError = require("../models/http-error");
 
 const createHall = async (req, res, next) => {
-  const { userId, hallName, email, address, location, images } = req.body;
+  // const { userId, hallName, email, address, location, images } = req.body;
 
-  const createdHall = new Hall({
-    hallName,
-    email,
-    address,
-    location,
-    images: [],
-    bookings: [],
-    ownerId: userId,
-  });
+  console.log("req.body ", req.body);
 
-  await createdHall.save();
+  // const createdHall = new Hall({
+  //   hallName,
+  //   email,
+  //   address,
+  //   location,
+  //   images: [],
+  //   bookings: [],
+  //   ownerId: userId,
+  // });
+
+  // await createdHall.save();
 
   res.json({ message: "Hall edited" });
 };
