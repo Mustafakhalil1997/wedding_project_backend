@@ -7,7 +7,7 @@ const {
 const router = express.Router();
 
 router.get("/", (req, res, next) => {
-  res.json({ mssg: "This is user route, it works" });
+  res.json({ message: "This is user route, it works" });
 });
 
 router.post("/createHall", createHall);

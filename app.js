@@ -25,9 +25,10 @@ app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
 app.use("/api/user", userRoutes);
 
-app.use("api/hall", hallRoutes);
+app.use("/api/hall", hallRoutes);
 
 app.use("/", (req, res) => {
+  console.log("hello from main");
   res.json({ message: "Main route" });
 });
 

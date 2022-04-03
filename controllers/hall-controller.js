@@ -1,23 +1,64 @@
 const { validationResult } = require("express-validator");
 const Hall = require("../models/hall");
+const User = require("../models/user");
 const HttpError = require("../models/http-error");
+const mongoose = require("mongoose");
 
 const createHall = async (req, res, next) => {
-  // const { userId, hallName, email, address, location, images } = req.body;
+  const { ownerId, hallName, email, address, location, images } = req.body;
 
   console.log("req.body ", req.body);
 
-  // const createdHall = new Hall({
-  //   hallName,
-  //   email,
-  //   address,
-  //   location,
-  //   images: [],
-  //   bookings: [],
-  //   ownerId: userId,
-  // });
+  const createdHall = new Hall({
+    hallName,
+    email,
+    address,
+    location,
+    images: [],
+    bookings: [],
+    ownerId: ownerId,
+  });
 
-  // await createdHall.save();
+  let user;
+
+  try {
+    console.log("searching for user");
+    user = await User.findById(ownerId);
+  } catch (err) {
+    console.log("errorr");
+    const error = new HttpError(
+      "Creating Hall failed while searching for owner, please try again.",
+      500
+    );
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError("Could not find user for provided id.", 404);
+    return next(error);
+  }
+
+  console.log("user ", user);
+
+  try {
+    console.log("creating hall");
+    const sess = await mongoose.startSession();
+    console.log("created session");
+    sess.startTransaction();
+    await createdHall.save({ session: sess });
+    console.log("hall created, going to next step");
+    user.hallId = createdHall; // this is supposed to add the id of the createdHall
+    console.log("user.hallId ", user.hallId);
+    await user.save({ session: sess });
+    await sess.commitTransaction();
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError(
+      "Creating Hall failed, please try againn.",
+      500
+    );
+    return next(error);
+  }
 
   res.json({ message: "Hall edited" });
 };
