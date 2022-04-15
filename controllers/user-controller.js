@@ -94,7 +94,8 @@ const login = async (req, res, next) => {
 
   let existingUser;
   try {
-    existingUser = await User.findOne({ email: email });
+    existingUser = await User.findOne({ email: email }).populate("hallId");
+    console.log("existingUser ", existingUser);
   } catch (err) {
     const error = new HttpError(
       "Logging in failed, please try again later",
@@ -148,6 +149,7 @@ const login = async (req, res, next) => {
   res.status(200).json({
     message: `logged in with ${email}`,
     userInfo: user,
+    hallInfo: existingUser.hallId.toObject({ getters: true }),
     token: token,
   });
 };

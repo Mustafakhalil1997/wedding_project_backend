@@ -60,7 +60,12 @@ const createHall = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({ message: "Hall edited" });
+  res
+    .status(200)
+    .json({
+      message: "Hall Created",
+      hall: createdHall.toObject({ getters: true }),
+    });
 };
 
 const findHallByUserId = async (req, res, next) => {
