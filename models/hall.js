@@ -5,10 +5,11 @@ const Schema = mongoose.Schema;
 const hallSchema = new Schema({
   hallName: { type: String, required: true },
   email: { type: String, required: true },
+  mobileNumber: { type: String, required: true },
   address: { type: String, required: true },
   location: {
     lat: { type: Number, required: true },
-    lng: { type: String, required: true },
+    lng: { type: Number, required: true },
   },
   images: [{ type: String, required: true }],
   bookings: [{ type: Date, required: true }],
