@@ -149,7 +149,9 @@ const login = async (req, res, next) => {
   res.status(200).json({
     message: `logged in with ${email}`,
     userInfo: user,
-    hallInfo: existingUser.hallId.toObject({ getters: true }),
+    hallInfo: existingUser.hallId
+      ? existingUser.hallId.toObject({ getters: true })
+      : null,
     token: token,
   });
 };
