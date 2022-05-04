@@ -3,16 +3,39 @@ const Hall = require("../models/hall");
 const User = require("../models/user");
 const HttpError = require("../models/http-error");
 const mongoose = require("mongoose");
+const hall = require("../models/hall");
+
+const getHalls = async (req, res, next) => {
+  let halls;
+  try {
+    halls = await hall.find();
+    if (!halls) {
+      const error = new HttpError("Could not find halls", 404);
+      return next(error);
+    }
+
+    const newHalls = halls.map((hall) => {
+      return hall.toObject({ getters: true });
+    });
+
+    res.json({ halls: newHalls });
+  } catch (err) {
+    const error = new HttpError("Could not get halls", 500);
+    return next(error);
+  }
+};
 
 const createHall = async (req, res, next) => {
-  const { ownerId, hallName, email, address, location } = req.body;
+  const { ownerId, hallName, email, address, location, mobileNumber } =
+    req.body;
 
   console.log("req.body ", req.body);
-
+  console.log("creating hall");
   const createdHall = new Hall({
     hallName,
     email,
     address,
+    mobileNumber,
     location,
     images: [],
     bookings: [],
@@ -89,6 +112,7 @@ const addImage = async (req, res, next) => {
   let hall;
   try {
     hall = await Hall.findById(hallId);
+    console.log("hall is ", hall);
   } catch (err) {
     const error = new HttpError(
       "Could not update profile, please try again",
@@ -96,7 +120,7 @@ const addImage = async (req, res, next) => {
     );
     return next(error);
   }
-  hall.images.append(req.file.path);
+  hall.images.push(req.file.path);
   hall.profileImage = req.file.path;
 
   try {
@@ -112,4 +136,4 @@ const addImage = async (req, res, next) => {
   res.json({ message: "Image uploaded successfully" });
 };
 
-module.exports = { createHall, findHallByUserId, addImage };
+module.exports = { createHall, findHallByUserId, addImage, getHalls };
