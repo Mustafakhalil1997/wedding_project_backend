@@ -12,7 +12,7 @@ const hallSchema = new Schema({
     lng: { type: Number, required: true },
   },
   images: [{ type: String, required: true }],
-  bookings: [{ type: Date, required: true }],
+  bookings: [{ type: mongoose.Types.ObjectId, required: true, ref: "Booking" }],
   ownerId: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
 });
 

@@ -10,7 +10,7 @@ const userSchema = new Schema({
   profileImage: { type: String },
   favorites: [{ type: mongoose.Types.ObjectId, ref: "Hall" }],
   hallId: { type: mongoose.Types.ObjectId, ref: "Hall" },
-  reservation: { type: mongoose.Types.ObjectId, ref: "Reservation" },
+  reservation: { type: mongoose.Types.ObjectId, ref: "Booking" },
 });
 
 module.exports = mongoose.model("User", userSchema);
