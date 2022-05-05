@@ -2,7 +2,7 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const HttpError = require("../models/http-error");
-// const { findOne } = require("../models/user");
+const mongoose = require("mongoose");
 
 const User = require("../models/user");
 
@@ -243,4 +243,45 @@ const addImage = async (req, res, next) => {
   res.json({ message: "Image uploaded successfully" });
 };
 
-module.exports = { signup, login, editUser, addImage };
+const addFavoriteHall = async (req, res, next) => {
+  const { userId, hallId } = req.body;
+
+  let user;
+  try {
+    console.log("attempting to add favorite");
+    user = await User.findById(userId);
+    console.log("found user ", user);
+  } catch (err) {
+    const error = new HttpError(
+      "Could not add favorite, please try again",
+      500
+    );
+    return next(error);
+  }
+
+  const index = user.favorites.findIndex((id) => id.toString() === hallId);
+  console.log("index ", index);
+  if (index < 0) {
+    const newHallId = mongoose.Types.ObjectId(hallId);
+    console.log("newHallId ", newHallId);
+    user.favorites.push(newHallId);
+  } else {
+    const newFavorites = user.favorites.filter((id) => id !== hallId);
+    console.log("newFavorites ", newFavorites);
+    user.favorites = newFavorites;
+  }
+
+  console.log("updated user ", user);
+  try {
+    await user.save();
+    console.log("updated user favorites");
+  } catch (err) {
+    console.log("error ", err);
+    const error = new HttpError("Could not add favorite", 500);
+    return next(error);
+  }
+
+  res.status(200).json({ message: "Favorite added" });
+};
+
+module.exports = { signup, login, editUser, addImage, addFavoriteHall };

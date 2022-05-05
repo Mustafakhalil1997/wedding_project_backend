@@ -5,6 +5,7 @@ const {
   login,
   editUser,
   addImage,
+  addFavoriteHall,
 } = require("../controllers/user-controller");
 const checkAuth = require("../middleware/check-auth");
 const fileUpload = require("../middleware/file-upload");
@@ -33,6 +34,8 @@ router.post(
 );
 
 router.use(checkAuth);
+
+router.patch("/addFavorite", addFavoriteHall);
 
 router.patch("/addImage/:uid", fileUpload.single("profileImage"), addImage);
 
