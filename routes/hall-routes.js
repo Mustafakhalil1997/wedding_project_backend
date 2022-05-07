@@ -8,7 +8,6 @@ const {
   findHallByUserId,
   addImage,
   getHalls,
-  createBooking,
 } = require("../controllers/hall-controller");
 const router = express.Router();
 
@@ -21,8 +20,6 @@ const router = express.Router();
 router.get("/", getHalls);
 
 router.post("/createHall", createHall);
-
-router.post("/createBooking", createBooking);
 
 router.get("/halls/:uid", findHallByUserId);
 

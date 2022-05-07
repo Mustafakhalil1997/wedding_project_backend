@@ -136,15 +136,9 @@ const addImage = async (req, res, next) => {
   res.json({ message: "Image uploaded successfully" });
 };
 
-const createBooking = async (req, res, next) => {
-  console.log(req.body);
-  res.json({ message: "Hall booked" });
-};
-
 module.exports = {
   createHall,
   findHallByUserId,
   addImage,
   getHalls,
-  createBooking,
 };
