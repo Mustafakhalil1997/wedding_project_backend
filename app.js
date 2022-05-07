@@ -11,6 +11,7 @@ const cors = require("cors");
 const HttpError = require("./models/http-error");
 const userRoutes = require("./routes/user-routes");
 const hallRoutes = require("./routes/hall-routes");
+const bookingRoutes = require("./routes/booking-routes");
 const res = require("express/lib/response");
 const connectDB = require("./db/connect");
 
@@ -26,6 +27,8 @@ app.use("/uploads/images", express.static(path.join("uploads", "images")));
 app.use("/api/user", userRoutes);
 
 app.use("/api/hall", hallRoutes);
+
+app.use("api/booking", bookingRoutes);
 
 app.use("/", (req, res) => {
   console.log("hello from main");
