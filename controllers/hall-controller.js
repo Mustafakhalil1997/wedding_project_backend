@@ -3,12 +3,11 @@ const Hall = require("../models/hall");
 const User = require("../models/user");
 const HttpError = require("../models/http-error");
 const mongoose = require("mongoose");
-const hall = require("../models/hall");
 
 const getHalls = async (req, res, next) => {
   let halls;
   try {
-    halls = await hall.find();
+    halls = await Hall.find().populate("bookings");
     if (!halls) {
       const error = new HttpError("Could not find halls", 404);
       return next(error);

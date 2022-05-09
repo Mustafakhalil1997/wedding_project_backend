@@ -52,7 +52,7 @@ const signup = async (req, res, next) => {
     profileImage,
     favorites: [],
     hallId: null,
-    booking: null,
+    reservation: null,
   });
 
   try {
@@ -82,7 +82,7 @@ const signup = async (req, res, next) => {
     profileImage,
     favorites: [],
     hallId: null,
-    booking: null,
+    reservation: null,
     password: password, // to be removed later
   };
 
@@ -142,7 +142,7 @@ const login = async (req, res, next) => {
     profileImage: existingUser.profileImage,
     favorites: existingUser.favorites,
     hallId: existingUser.hallId,
-    booking: existingUser.booking,
+    reservation: existingUser.reservation,
     password: password, // to be removed later
   };
 
@@ -266,8 +266,10 @@ const addFavoriteHall = async (req, res, next) => {
     console.log("newHallId ", newHallId);
     user.favorites.push(newHallId);
   } else {
-    const newFavorites = user.favorites.filter((id) => id !== hallId);
-    console.log("newFavorites ", newFavorites);
+    const newFavorites = user.favorites.filter(
+      (id) => id.toString() !== hallId
+    );
+    console.log("newFavoritess ", newFavorites);
     user.favorites = newFavorites;
   }
 

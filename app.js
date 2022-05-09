@@ -28,11 +28,11 @@ app.use("/api/user", userRoutes);
 
 app.use("/api/hall", hallRoutes);
 
-app.use("api/booking", bookingRoutes);
+app.use("/api/booking", bookingRoutes);
 
 app.use("/", (req, res) => {
   console.log("hello from main");
-  res.json({ message: "Main route" });
+  res.status(200).json({ message: "Main route" });
 });
 
 // app.get("/", (req, res) => {
