@@ -94,9 +94,18 @@ const login = async (req, res, next) => {
 
   let existingUser;
   try {
-    existingUser = await User.findOne({ email: email }).populate("hallId");
+    existingUser = await User.findOne({ email: email })
+      .populate("reservation")
+      .populate({
+        path: "hallId",
+        populate: {
+          path: "bookings",
+          model: "Booking",
+        },
+      });
     console.log("existingUser ", existingUser);
   } catch (err) {
+    console.log(err);
     const error = new HttpError(
       "Logging in failed, please try again later",
       500
