@@ -25,7 +25,7 @@ const getHalls = async (req, res, next) => {
 };
 
 const createHall = async (req, res, next) => {
-  const { ownerId, hallName, email, address, location, mobileNumber } =
+  const { ownerId, hallName, email, address, location, mobileNumber, price } =
     req.body;
 
   console.log("req.body ", req.body);
@@ -35,6 +35,7 @@ const createHall = async (req, res, next) => {
     email,
     address,
     mobileNumber,
+    price,
     location,
     images: [],
     bookings: [],
