@@ -11,6 +11,7 @@ const hallSchema = new Schema({
     lat: { type: Number, required: true },
     lng: { type: Number, required: true },
   },
+  price: { type: Number, required: true }, // per person
   images: [{ type: String, required: true }],
   bookings: [{ type: mongoose.Types.ObjectId, required: true, ref: "Booking" }],
   ownerId: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
