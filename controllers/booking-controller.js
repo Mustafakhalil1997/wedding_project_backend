@@ -30,6 +30,14 @@ const createBooking = async (req, res, next) => {
     return next(error);
   }
 
+  if (user.reservation) {
+    console.log("you already have a reservation");
+    const error = new HttpError(
+      "Cannot reserve, you already have a reservation"
+    );
+    return next(error);
+  }
+
   console.log("user found");
 
   const createdBooking = new Booking({
@@ -50,9 +58,12 @@ const createBooking = async (req, res, next) => {
     user.reservation = createdBooking;
     console.log("user ", user);
     await hall.save({ session: sess });
+    console.log("saved hall");
     await user.save({ session: sess });
+    console.log("saved");
     await sess.commitTransaction();
   } catch (err) {
+    console.log("failed to reserve ", err);
     const error = new HttpError(
       "creating booking failed, please try again",
       500
