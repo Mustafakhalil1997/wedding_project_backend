@@ -77,4 +77,36 @@ const createBooking = async (req, res, next) => {
   });
 };
 
-module.exports = { createBooking };
+const getBookingsWithUsers = async (req, res, next) => {
+  const bookingIds = req.body;
+
+  console.log("bookingsIds ", bookingIds);
+  let bookings;
+  try {
+    bookings = await Booking.find({ _id: bookingIds }).populate("userId");
+    console.log("bookings ", bookings);
+  } catch (err) {
+    const error = new HttpError("Failed get bookings", 500);
+    return next(error);
+  }
+
+  if (!bookings) {
+    const error = new HttpError("Could not find bookings", 404);
+    return next(error);
+  }
+
+  let bookingsWithUser = {};
+  for (let i = 0; i < bookings.length; i++) {
+    console.log(bookings[i].date.toISOString().substring(0, 10));
+    const date = bookings[i].date.toISOString().substring(0, 10);
+    console.log("date ", date);
+    console.log("bookings ", bookings[0].userId);
+    bookingsWithUser[date] = {};
+    const user = bookings[i].userId;
+    bookingsWithUser[date] = user;
+  }
+
+  res.status(200).json({ bookings: bookingsWithUser });
+};
+
+module.exports = { createBooking, getBookingsWithUsers };

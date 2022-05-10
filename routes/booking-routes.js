@@ -3,7 +3,10 @@ const { check } = require("express-validator");
 const fileUpload = require("../middleware/file-upload");
 const checkAuth = require("../middleware/check-auth");
 
-const { createBooking } = require("../controllers/booking-controller");
+const {
+  createBooking,
+  getBookingsWithUsers,
+} = require("../controllers/booking-controller");
 
 const router = express.Router();
 
@@ -12,6 +15,8 @@ const router = express.Router();
 // });
 
 // router.use(checkAuth);
+
+router.post("/getBookingsWithUsers", getBookingsWithUsers);
 
 router.post("/createBooking", createBooking);
 
