@@ -295,4 +295,40 @@ const addFavoriteHall = async (req, res, next) => {
   res.status(200).json({ message: "Favorite added" });
 };
 
-module.exports = { signup, login, editUser, addImage, addFavoriteHall };
+const getUsersByIds = async (req, res, next) => {
+  const userIds = req.body;
+
+  console.log("userIds ", userIds);
+  let users;
+  try {
+    users = await User.find({ _id: userIds });
+    console.log("users ", users);
+    users = users.map((user) => {
+      const newUser = user.toObject({ getters: true });
+      const { id, firstName, lastName, email } = newUser;
+      return { id, firstName, lastName, email };
+    });
+
+    console.log("users again ", users);
+  } catch (err) {
+    console.log("err ", err);
+    const error = new HttpError("Could not get users ", 500);
+    return next(error);
+  }
+
+  if (!users) {
+    const error = new HttpError("Could not find users ", 404);
+    return next(error);
+  }
+
+  res.status(200).json({ users: users });
+};
+
+module.exports = {
+  signup,
+  login,
+  editUser,
+  addImage,
+  addFavoriteHall,
+  getUsersByIds,
+};
