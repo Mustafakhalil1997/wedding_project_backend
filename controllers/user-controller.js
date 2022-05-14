@@ -181,7 +181,6 @@ const editUser = async (req, res, next) => {
     firstName,
     lastName,
     email,
-    password,
     // profileImage,
     // favorites,
     // hallId,
