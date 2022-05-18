@@ -14,7 +14,7 @@ const router = express.Router();
 //   res.json({ message: "This is hall route, it works" });
 // });
 
-// router.use(checkAuth);
+router.use(checkAuth);
 
 router.post("/getBookingsWithUsers", getBookingsWithUsers);
 
