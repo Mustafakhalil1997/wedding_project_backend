@@ -7,6 +7,7 @@ const {
   addImage,
   addFavoriteHall,
   getUsersByIds,
+  forgotPassword,
 } = require("../controllers/user-controller");
 const checkAuth = require("../middleware/check-auth");
 const fileUpload = require("../middleware/file-upload");
@@ -33,6 +34,8 @@ router.post(
   [check("email").normalizeEmail({ gmail_remove_dots: false }).isEmail()],
   login
 );
+
+router.patch("/forgotPassword", forgotPassword);
 
 router.use(checkAuth);
 

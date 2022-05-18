@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const HttpError = require("../models/http-error");
 const mongoose = require("mongoose");
+const nodemailer = require("nodemailer");
 
 const User = require("../models/user");
 
@@ -163,6 +164,44 @@ const login = async (req, res, next) => {
       : null,
     token: token,
   });
+};
+
+const GMAIL_PASS = process.env.GMAIL_PASS;
+
+const forgotPassword = async (req, res, next) => {
+  try {
+    let testAccount = await nodemailer.createTestAccount();
+
+    console.log("sending request");
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+      // service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: "mustafakh1997@gmail.com", // generated ethereal user
+        pass: GMAIL_PASS, // generated ethereal password
+      },
+    });
+
+    console.log("sending request");
+
+    const details = {
+      from: "mustafakh1997@gmail.com", // sender address
+      to: "mustafa.khalil@lau.edu, m.khalil9752@gmail.com, shifaa.khalil@outlook.com", // list of receivers
+      subject: "Hello ✔", // Subject line
+      text: "Hello world?", // plain text body
+      html: "<b>Hello world?</b>", // html body
+    };
+
+    const info = await transporter.sendMail(details);
+
+    console.log("info", info.messageId);
+    res.status(200).json({ message: "Password changed" });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const editUser = async (req, res, next) => {
@@ -330,4 +369,5 @@ module.exports = {
   addImage,
   addFavoriteHall,
   getUsersByIds,
+  forgotPassword,
 };
