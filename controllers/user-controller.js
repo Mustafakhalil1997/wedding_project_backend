@@ -167,7 +167,7 @@ const login = async (req, res, next) => {
 };
 
 const GMAIL_PASS = process.env.GMAIL_PASS;
-
+// testing
 const forgotPassword = async (req, res, next) => {
   try {
     let testAccount = await nodemailer.createTestAccount();
