@@ -3,6 +3,7 @@ const Hall = require("../models/hall");
 const User = require("../models/user");
 const HttpError = require("../models/http-error");
 const mongoose = require("mongoose");
+const { cloudinary } = require("../helpers/cloudinary");
 
 const getHalls = async (req, res, next) => {
   let halls;
@@ -133,7 +134,9 @@ const addImage = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({ message: "Image uploaded successfully" });
+  res
+    .status(200)
+    .json({ message: "Image uploaded successfully", newHallInfo: hall });
 };
 
 module.exports = {
