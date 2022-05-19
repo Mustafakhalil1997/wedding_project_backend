@@ -40,6 +40,19 @@ const createBooking = async (req, res, next) => {
 
   console.log("user found");
 
+  let existingReservation;
+  try {
+    existingReservation = await Booking.findOne({ hallId: hallId, date: date });
+  } catch (err) {
+    const error = new HttpError("Could not reserve, Try again later", 500);
+    return next(error);
+  }
+  console.log("existingReservation ", existingReservation);
+  if (existingReservation) {
+    const error = new HttpError("This day is reserved, Choose another", 404);
+    return next(error);
+  }
+
   const createdBooking = new Booking({
     userId,
     hallId,
@@ -54,13 +67,9 @@ const createBooking = async (req, res, next) => {
     console.log("booking saved");
 
     hall.bookings.push(createdBooking); // this should add the id of the created booking
-    console.log("hall ", hall);
     user.reservation = createdBooking;
-    console.log("user ", user);
     await hall.save({ session: sess });
-    console.log("saved hall");
     await user.save({ session: sess });
-    console.log("saved");
     await sess.commitTransaction();
   } catch (err) {
     console.log("failed to reserve ", err);
