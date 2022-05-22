@@ -276,6 +276,8 @@ const addImage = async (req, res, next) => {
     return next(error);
   }
 
+  const { public_id } = uploadedFile;
+
   console.log("uploadedFile ", uploadedFile);
 
   let user;
@@ -288,7 +290,7 @@ const addImage = async (req, res, next) => {
     );
     return next(error);
   }
-  user.profileImage = req.file.path;
+  user.profileImage = public_id;
 
   try {
     await user.save();

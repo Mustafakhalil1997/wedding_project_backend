@@ -110,6 +110,19 @@ const addImage = async (req, res, next) => {
 
   console.log("req.file ", req.file);
 
+  let uploadedFile;
+  try {
+    uploadedFile = await cloudinary.uploader.upload(req.file.path, {
+      folder: "images",
+    });
+  } catch (err) {
+    console.log("err ", err.message);
+    const error = new HttpError("Failed to upload to cloudinary ", 500);
+    return next(error);
+  }
+
+  const { public_id } = uploadedFile;
+
   let hall;
   try {
     hall = await Hall.findById(hallId);
@@ -121,8 +134,8 @@ const addImage = async (req, res, next) => {
     );
     return next(error);
   }
-  hall.images.push(req.file.path);
-  hall.profileImage = req.file.path;
+  hall.images.push(public_id);
+  // hall.profileImage = req.file.path;
 
   try {
     await hall.save();
