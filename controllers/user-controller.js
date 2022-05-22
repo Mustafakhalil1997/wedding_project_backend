@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const HttpError = require("../models/http-error");
 const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
+const { cloudinary } = require("../helpers/cloudinary");
 
 const User = require("../models/user");
 
@@ -264,6 +265,18 @@ const addImage = async (req, res, next) => {
   const userId = req.params.uid;
 
   console.log("req.file ", req.file);
+  let uploadedFile;
+  try {
+    uploadedFile = await cloudinary.uploader.upload(req.file.path, {
+      folder: "images",
+    });
+  } catch (err) {
+    console.log("err ", err.message);
+    const error = new HttpError("Failed to upload to cloudinary ", 500);
+    return next(error);
+  }
+
+  console.log("uploadedFile ", uploadedFile);
 
   let user;
   try {
