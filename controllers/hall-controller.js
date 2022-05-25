@@ -126,7 +126,6 @@ const addImage = async (req, res, next) => {
   let hall;
   try {
     hall = await Hall.findById(hallId);
-    console.log("hall is ", hall);
   } catch (err) {
     const error = new HttpError(
       "Could not update profile, please try again",
@@ -147,9 +146,55 @@ const addImage = async (req, res, next) => {
     return next(error);
   }
 
-  res
-    .status(200)
-    .json({ message: "Image uploaded successfully", newHallInfo: hall });
+  res.status(200).json({
+    message: "Image uploaded successfully",
+    newHallInfo: hall,
+    newImage: public_id,
+  });
+};
+
+const deleteImages = async (req, res, next) => {
+  const deleteIds = req.body;
+  const hallId = req.params.hid;
+
+  let hall;
+  try {
+    hall = await Hall.findById(hallId);
+  } catch (err) {
+    console.log("err ", err);
+    const error = new HttpError("Could not delete", 500);
+    return next(error);
+  }
+
+  if (!hall) {
+    const error = new HttpError(
+      "Could not delete images, please try again ",
+      404
+    );
+    return next(error);
+  }
+
+  let newImages = hall.images.filter((image) => !deleteIds.includes(image));
+
+  hall.images = newImages;
+
+  try {
+    await hall.save();
+  } catch (err) {
+    const error = new HttpError(
+      "Could not delete images, please try again",
+      500
+    );
+    return next(error);
+  }
+
+  // try {
+  //   await cloudinary.uploader.destroy(deleteIds);
+  // } catch (err) {
+  //   console.log("err ", err);
+  // }
+
+  res.status(200).json({ message: "Photos deleted", updatedHall: hall });
 };
 
 module.exports = {
@@ -157,4 +202,5 @@ module.exports = {
   findHallByUserId,
   addImage,
   getHalls,
+  deleteImages,
 };

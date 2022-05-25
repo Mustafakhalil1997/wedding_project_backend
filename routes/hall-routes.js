@@ -8,6 +8,7 @@ const {
   findHallByUserId,
   addImage,
   getHalls,
+  deleteImages,
 } = require("../controllers/hall-controller");
 const router = express.Router();
 
@@ -19,12 +20,13 @@ const router = express.Router();
 
 router.get("/", getHalls);
 
-router.post("/createHall", createHall);
-
 router.get("/halls/:uid", findHallByUserId);
+
+router.post("/createHall", createHall);
 
 router.patch("/addImage/:uid", fileUpload.single("profileImage"), addImage);
 
+router.patch("/deleteImages/:hid", deleteImages);
 // router.get("/", (req, res, next) => {});
 
 module.exports = router;
