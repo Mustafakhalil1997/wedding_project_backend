@@ -11,6 +11,7 @@ const userSchema = new Schema({
   favorites: [{ type: mongoose.Types.ObjectId, ref: "Hall" }],
   hallId: { type: mongoose.Types.ObjectId, ref: "Hall" },
   reservation: { type: mongoose.Types.ObjectId, ref: "Booking" },
+  chatRooms: [{ type: mongoose.Types.ObjectId, ref: "ChatRoom" }],
 });
 
 module.exports = mongoose.model("User", userSchema);

@@ -12,8 +12,10 @@ const HttpError = require("./models/http-error");
 const userRoutes = require("./routes/user-routes");
 const hallRoutes = require("./routes/hall-routes");
 const bookingRoutes = require("./routes/booking-routes");
+const chatRoutes = require("./routes/chatRoom-routes");
 const res = require("express/lib/response");
 const connectDB = require("./db/connect");
+const URL = require("./helpers/url");
 
 const app = express();
 const server = require("http").Server(app);
@@ -22,6 +24,15 @@ app.use(bodyParser.json());
 
 app.use(cors());
 
+const io = require("socket.io");
+
+io(server, {
+  cors: {
+    origin: `${URL}`,
+    methods: ["GET", "POST"],
+  },
+});
+
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
 app.use("/api/user", userRoutes);
@@ -29,6 +40,8 @@ app.use("/api/user", userRoutes);
 app.use("/api/hall", hallRoutes);
 
 app.use("/api/booking", bookingRoutes);
+
+app.use("/api/chat", chatRoutes);
 
 app.use("/", (req, res) => {
   console.log("hello from main");

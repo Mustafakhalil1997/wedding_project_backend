@@ -154,6 +154,7 @@ const login = async (req, res, next) => {
     favorites: existingUser.favorites,
     hallId: existingUser.hallId,
     reservation: existingUser.reservation,
+    chatRooms: existingUser.chatRooms,
     password: password, // to be removed later
   };
 
