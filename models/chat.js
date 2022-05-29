@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const chatRoomSchema = new Schema({
-  contacts: [{ type: String, required: true }],
+  contacts: [{ type: mongoose.Types.ObjectId, required: true, ref: "User" }],
   chats: [
     {
       senderId: { type: mongoose.Types.ObjectId, required: true, ref: "User" },

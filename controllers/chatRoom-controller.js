@@ -14,8 +14,11 @@ const getAllChats = async (req, res, next) => {
 
   let chatRooms;
   try {
-    chatRooms = await ChatRoom.find({ _id: convertedIds });
+    chatRooms = await ChatRoom.find({ _id: convertedIds })
+      .sort([["chats.time", -1]]) // sort isn't working
+      .populate("contacts", "firstName lastName profileImage");
   } catch (err) {
+    console.log(err);
     console.log(err);
     const error = new HttpError("Could not fetch chat rooms", 500);
     return next(error);
@@ -29,8 +32,47 @@ const getAllChats = async (req, res, next) => {
 
   console.log("chatrooms ", chatRooms);
 
-  res.json({ message: "received" });
+  console.log("room ", chatRooms[0]);
+
+  res.json({ message: "received", chats: chatRooms });
 };
+
+const sendMessage = async (req, res, next) => {
+  const { roomId, newMessage } = req.body;
+
+  console.log(roomId);
+  console.log(newMessage);
+
+  let chatRoom;
+  try {
+    chatRoom = await ChatRoom.findById(roomId);
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("Something went wrong", 500);
+    return next(error);
+  }
+
+  if (!chatRoom) {
+    const error = new HttpError("chat room doesn't exist", 404);
+    return next(error);
+  }
+
+  console.log(chatRoom);
+
+  chatRoom.chats.unshift(newMessage);
+
+  console.log(chatRoom.chats);
+
+  try {
+    await chatRoom.save();
+  } catch (err) {
+    console.log(err);
+  }
+
+  res.json({ message: "message received" });
+};
+
+///////////
 
 const getChats = async (req, res, next) => {
   const chatRoomId = req.params.roomId;
@@ -73,4 +115,4 @@ const getChats = async (req, res, next) => {
   });
 };
 
-module.exports = { getChats, getAllChats };
+module.exports = { getChats, getAllChats, sendMessage };
