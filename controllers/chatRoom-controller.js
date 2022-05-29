@@ -41,7 +41,8 @@ const sendMessage = async (req, res, next) => {
   const { roomId, newMessage } = req.body;
 
   console.log(roomId);
-  console.log(newMessage);
+  console.log("newMessage ", newMessage);
+  console.log(typeof newMessage.senderId);
 
   let chatRoom;
   try {
