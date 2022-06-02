@@ -24,13 +24,20 @@ app.use(bodyParser.json());
 
 app.use(cors());
 
-const io = require("socket.io");
+const { Server } = require("socket.io");
+const io = new Server(server);
 
-io(server, {
-  cors: {
-    origin: `${URL}`,
-    methods: ["GET", "POST"],
-  },
+io.on("connection", (socket) => {
+  // socket.on("sentMessage", ({ contactId, messages }) => {
+  //   console.log("contactId ", contactId);
+  //   console.log("message received and sent by the server", messages);
+  //   console.log("type of message in the server ", typeof messages);
+  //   io.emit(contactId, messages);
+  // });
+
+  socket.on("sentMessage", ({ stringObjectListener, messages }) => {
+    io.emit(stringObjectListener, messages);
+  });
 });
 
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
