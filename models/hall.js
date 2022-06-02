@@ -15,6 +15,7 @@ const hallSchema = new Schema({
   images: [{ type: String, required: true }],
   bookings: [{ type: mongoose.Types.ObjectId, required: true, ref: "Booking" }],
   ownerId: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
+  chatRooms: [{ type: mongoose.Types.ObjectId, ref: "ChatRoom" }],
 });
 
 module.exports = mongoose.model("Hall", hallSchema); // this will later be the name of the collection in the database( but with lowercase and plural)
