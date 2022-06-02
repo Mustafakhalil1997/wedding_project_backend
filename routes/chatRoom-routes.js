@@ -7,6 +7,7 @@ const {
   getChats,
   getAllChats,
   sendMessage,
+  createChat,
 } = require("../controllers/chatRoom-controller");
 
 const router = express.Router();
@@ -14,6 +15,8 @@ const router = express.Router();
 router.get("/:ids", getAllChats);
 
 router.get("/:roomId", getChats);
+
+router.post("/createChat", createChat);
 
 router.patch("/sendMessage", sendMessage);
 

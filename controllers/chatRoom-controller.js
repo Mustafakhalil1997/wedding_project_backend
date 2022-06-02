@@ -37,12 +37,63 @@ const getAllChats = async (req, res, next) => {
   res.json({ message: "received", chats: chatRooms });
 };
 
+const createChat = async (req, res, next) => {
+  const { firstMessage, userId, hallId } = req.body;
+
+  const contacts = [userId, hallId];
+
+  const chatRoom = new ChatRoom({
+    chats: [firstMessage],
+    contacts: contacts,
+  });
+
+  let user;
+  try {
+    user = await User.findById(userId);
+  } catch (err) {
+    console.log("err ", err);
+    const error = new HttpError("Something went wrong", 500);
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError("Could not find user to send the message", 404);
+    return next(error);
+  }
+
+  let hall;
+  try {
+    hall = await Hall.findById(hallId);
+  } catch (err) {
+    console.log("err ", err);
+    const error = new HttpError("Something went wrong ", 500);
+    return next(error);
+  }
+
+  if (!hall) {
+    const error = new HttpError("Could not find hall to send the message", 404);
+    return next(error);
+  }
+
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await chatRoom.save({ session: sess });
+    user.chatRooms.push(chatRoom);
+    hall.chatRooms.push(chatRoom);
+    await user.save({ session: sess });
+    await hall.save({ session: sess });
+    await sess.commitTransaction();
+  } catch (err) {
+    console.log("err ", err);
+  }
+};
+
 const sendMessage = async (req, res, next) => {
   const { roomId, newMessage } = req.body;
 
   console.log(roomId);
   console.log("newMessage ", newMessage);
-  console.log(typeof newMessage.senderId);
 
   let chatRoom;
   try {
@@ -116,4 +167,4 @@ const getChats = async (req, res, next) => {
   });
 };
 
-module.exports = { getChats, getAllChats, sendMessage };
+module.exports = { getChats, getAllChats, sendMessage, createChat };
