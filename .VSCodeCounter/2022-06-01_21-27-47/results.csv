@@ -1,0 +1,23 @@
+"filename", "language", "JavaScript", "JSON", "comment", "blank", "total"
+"c:\Final Project\Backend\app.js", "JavaScript", 65, 0, 10, 22, 97
+"c:\Final Project\Backend\controllers\booking-controller.js", "JavaScript", 102, 0, 0, 20, 122
+"c:\Final Project\Backend\controllers\chatRoom-controller.js", "JavaScript", 99, 0, 3, 32, 134
+"c:\Final Project\Backend\controllers\hall-controller.js", "JavaScript", 171, 0, 6, 30, 207
+"c:\Final Project\Backend\controllers\user-controller.js", "JavaScript", 331, 0, 10, 49, 390
+"c:\Final Project\Backend\db\connect.js", "JavaScript", 5, 0, 0, 3, 8
+"c:\Final Project\Backend\helpers\cloudinary.js", "JavaScript", 8, 0, 0, 3, 11
+"c:\Final Project\Backend\helpers\url.js", "JavaScript", 2, 0, 1, 2, 5
+"c:\Final Project\Backend\middleware\check-auth.js", "JavaScript", 16, 0, 0, 2, 18
+"c:\Final Project\Backend\middleware\file-upload.js", "JavaScript", 19, 0, 9, 4, 32
+"c:\Final Project\Backend\models\booking.js", "JavaScript", 8, 0, 0, 4, 12
+"c:\Final Project\Backend\models\chat.js", "JavaScript", 18, 0, 2, 4, 24
+"c:\Final Project\Backend\models\hall.js", "JavaScript", 18, 0, 0, 4, 22
+"c:\Final Project\Backend\models\http-error.js", "JavaScript", 7, 0, 0, 2, 9
+"c:\Final Project\Backend\models\user.js", "JavaScript", 14, 0, 0, 4, 18
+"c:\Final Project\Backend\package-lock.json", "JSON", 0, 2674, 0, 1, 2675
+"c:\Final Project\Backend\package.json", "JSON", 0, 31, 0, 1, 32
+"c:\Final Project\Backend\routes\booking-routes.js", "JavaScript", 13, 0, 3, 8, 24
+"c:\Final Project\Backend\routes\chatRoom-routes.js", "JavaScript", 14, 0, 0, 7, 21
+"c:\Final Project\Backend\routes\hall-routes.js", "JavaScript", 18, 0, 5, 10, 33
+"c:\Final Project\Backend\routes\user-routes.js", "JavaScript", 45, 0, 2, 13, 60
+"Total", "-", 973, 2705, 51, 225, 3954
