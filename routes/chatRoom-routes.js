@@ -5,14 +5,17 @@ const checkAuth = require("../middleware/check-auth");
 
 const {
   getChats,
-  getAllChats,
+  getUserChats,
+  getHallChats,
   sendMessage,
   createChat,
 } = require("../controllers/chatRoom-controller");
 
 const router = express.Router();
 
-router.get("/:ids", getAllChats);
+router.get("/user/:ids", getUserChats);
+
+router.get("/hall/:ids", getHallChats);
 
 router.get("/:roomId", getChats);
 

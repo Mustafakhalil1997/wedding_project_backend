@@ -5,7 +5,7 @@ const Hall = require("../models/hall");
 const User = require("../models/user");
 const ChatRoom = require("../models/chat");
 
-const getAllChats = async (req, res, next) => {
+const getUserChats = async (req, res, next) => {
   console.log(typeof JSON.parse(req.params.ids));
 
   const convertedIds = JSON.parse(req.params.ids).map((id) =>
@@ -16,7 +16,47 @@ const getAllChats = async (req, res, next) => {
   try {
     chatRooms = await ChatRoom.find({ _id: convertedIds })
       .sort([["chats.time", -1]]) // sort isn't working
-      .populate("contacts", "firstName lastName profileImage");
+      // .populate("userId", "firstName lastName profileImage")
+      .populate({
+        path: "hallId",
+        select: {
+          hallName: 1,
+          images: { $slice: ["$images", 1] },
+        },
+      });
+  } catch (err) {
+    console.log(err);
+    console.log(err);
+    const error = new HttpError("Could not fetch chat rooms", 500);
+    return next(error);
+  }
+
+  if (!chatRooms) {
+    console.log("no rooms");
+    const error = new HttpError("No chat rooms found", 404);
+    return next(error);
+  }
+
+  console.log("chatrooms ", chatRooms);
+
+  console.log("room ", chatRooms[0]);
+
+  res.json({ message: "received", chats: chatRooms });
+};
+
+const getHallChats = async (req, res, next) => {
+  console.log(typeof JSON.parse(req.params.ids));
+  console.log("getting hall chats");
+  const convertedIds = JSON.parse(req.params.ids).map((id) =>
+    mongoose.Types.ObjectId(id)
+  );
+
+  let chatRooms;
+  try {
+    chatRooms = await ChatRoom.find({ _id: convertedIds })
+      .sort([["chats.time", -1]]) // sort isn't working
+      // .populate("userId", "firstName lastName profileImage")
+      .populate("userId", "firstName lastName profileImage");
   } catch (err) {
     console.log(err);
     console.log(err);
@@ -40,11 +80,10 @@ const getAllChats = async (req, res, next) => {
 const createChat = async (req, res, next) => {
   const { firstMessage, userId, hallId } = req.body;
 
-  const contacts = [userId, hallId];
-
   const chatRoom = new ChatRoom({
     chats: [firstMessage],
-    contacts: contacts,
+    userId: userId,
+    hallId: hallId,
   });
 
   let user;
@@ -87,6 +126,8 @@ const createChat = async (req, res, next) => {
   } catch (err) {
     console.log("err ", err);
   }
+
+  res.status(200).json({ chatRoom: chatRoom, user: user });
 };
 
 const sendMessage = async (req, res, next) => {
@@ -167,4 +208,10 @@ const getChats = async (req, res, next) => {
   });
 };
 
-module.exports = { getChats, getAllChats, sendMessage, createChat };
+module.exports = {
+  getChats,
+  getUserChats,
+  getHallChats,
+  sendMessage,
+  createChat,
+};
