@@ -41,7 +41,7 @@ const getUserChats = async (req, res, next) => {
 
   console.log("room ", chatRooms[0]);
 
-  res.json({ message: "received", chats: chatRooms });
+  res.status(200).json({ message: "received", chats: chatRooms });
 };
 
 const getHallChats = async (req, res, next) => {
@@ -74,7 +74,7 @@ const getHallChats = async (req, res, next) => {
 
   console.log("room ", chatRooms[0]);
 
-  res.json({ message: "received", chats: chatRooms });
+  res.status(200).json({ message: "received", chats: chatRooms });
 };
 
 const createChat = async (req, res, next) => {
@@ -85,6 +85,8 @@ const createChat = async (req, res, next) => {
     userId: userId,
     hallId: hallId,
   });
+
+  console.log("createdChatRoom ", chatRoom);
 
   let user;
   try {
@@ -127,7 +129,13 @@ const createChat = async (req, res, next) => {
     console.log("err ", err);
   }
 
-  res.status(200).json({ chatRoom: chatRoom, user: user });
+  console.log("user ", user);
+  console.log("hall ", hall);
+  console.log("chatRoom after updating ", chatRoom);
+
+  res
+    .status(200)
+    .json({ chatRoom: chatRoom, user: user.toObject({ getters: true }) });
 };
 
 const sendMessage = async (req, res, next) => {
