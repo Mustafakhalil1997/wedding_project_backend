@@ -8,6 +8,7 @@ const ChatRoom = require("../models/chat");
 const getUserChats = async (req, res, next) => {
   console.log(typeof JSON.parse(req.params.ids));
 
+  console.log("getting user chats");
   const convertedIds = JSON.parse(req.params.ids).map((id) =>
     mongoose.Types.ObjectId(id)
   );
