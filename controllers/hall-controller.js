@@ -41,6 +41,7 @@ const createHall = async (req, res, next) => {
     images: [],
     bookings: [],
     ownerId: ownerId,
+    chatRooms: [],
   });
 
   let user;
