@@ -106,7 +106,7 @@ const getBookingsWithUsers = async (req, res, next) => {
 
   let bookingsWithUser = {};
   for (let i = 0; i < bookings.length; i++) {
-    console.log(bookings[i].date.toISOString().substring(0, 10));
+    // console.log(bookings[i].date.toISOString().substring(0, 10));
     const date = bookings[i].date.toISOString().substring(0, 10);
     console.log("date ", date);
     console.log("bookings ", bookings[0].userId);
@@ -114,6 +114,8 @@ const getBookingsWithUsers = async (req, res, next) => {
     const user = bookings[i].userId;
     bookingsWithUser[date] = user;
   }
+
+  console.log("bookingsWithUser ", bookingsWithUser);
 
   res.status(200).json({ bookings: bookingsWithUser });
 };

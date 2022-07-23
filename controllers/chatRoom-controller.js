@@ -134,9 +134,18 @@ const createChat = async (req, res, next) => {
   console.log("hall ", hall);
   console.log("chatRoom after updating ", chatRoom);
 
+  console.log("populating chatRoom hallId");
+  const newChatRoom = {
+    ...chatRoom,
+    hallId: {
+      hallName: hall.hallName,
+      images: hall.images[0],
+    },
+  };
+
   res
     .status(200)
-    .json({ chatRoom: chatRoom, user: user.toObject({ getters: true }) });
+    .json({ chatRoom: newChatRoom, user: user.toObject({ getters: true }) });
 };
 
 const sendMessage = async (req, res, next) => {
