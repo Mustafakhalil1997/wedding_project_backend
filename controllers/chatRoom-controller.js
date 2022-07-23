@@ -135,13 +135,14 @@ const createChat = async (req, res, next) => {
   console.log("chatRoom after updating ", chatRoom);
 
   console.log("populating chatRoom hallId");
-  const newChatRoom = {
-    ...chatRoom,
-    hallId: {
-      hallName: hall.hallName,
-      images: hall.images[0],
+
+  const newChatRoom = await chatRoom.populate({
+    path: "hallId",
+    select: {
+      hallName: 1,
+      images: { $slice: ["$images", 1] },
     },
-  };
+  });
 
   res
     .status(200)
