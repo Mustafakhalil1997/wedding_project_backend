@@ -38,6 +38,17 @@ io.on("connection", (socket) => {
   socket.on("sentMessage", ({ stringObjectListener, messages }) => {
     io.emit(stringObjectListener, messages);
   });
+
+  socket.on("newChatRoom", ({ stringObjectListener, chatRoom, messages }) => {
+    console.log("newChatRoom received by socket");
+    console.log(
+      "StringObjectListener ",
+      stringObjectListener,
+      typeof stringObjectListener
+    );
+    console.log(chatRoom);
+    io.emit(stringObjectListener, chatRoom, messages);
+  });
 });
 
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
