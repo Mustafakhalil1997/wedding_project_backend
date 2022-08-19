@@ -1,0 +1,52 @@
+Date : 2022-07-24 19:05:14
+Directory : c:\Final Project\Backend
+Total : 21 files,  3781 codes, 55 comments, 244 blanks, all 4080 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JSON       |          2 |      2,705 |          0 |          2 |      2,707 |
+| JavaScript |         19 |      1,076 |         55 |        242 |      1,373 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                        | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                           |         21 |      3,781 |         55 |        244 |      4,080 |
+| controllers                                                 |          4 |        791 |         22 |        147 |        960 |
+| db                                                          |          1 |          5 |          0 |          3 |          8 |
+| helpers                                                     |          2 |         10 |          1 |          5 |         16 |
+| middleware                                                  |          2 |         35 |          9 |          6 |         50 |
+| models                                                      |          5 |         66 |          3 |         18 |         87 |
+| routes                                                      |          4 |         94 |         10 |         40 |        144 |
++-------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                    | language   | code       | comment    | blank      | total      |
++-------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Final Project\Backend\app.js                             | JavaScript |         75 |         10 |         23 |        108 |
+| c:\Final Project\Backend\controllers\booking-controller.js  | JavaScript |        102 |          1 |         21 |        124 |
+| c:\Final Project\Backend\controllers\chatRoom-controller.js | JavaScript |        185 |          5 |         47 |        237 |
+| c:\Final Project\Backend\controllers\hall-controller.js     | JavaScript |        172 |          6 |         30 |        208 |
+| c:\Final Project\Backend\controllers\user-controller.js     | JavaScript |        332 |         10 |         49 |        391 |
+| c:\Final Project\Backend\db\connect.js                      | JavaScript |          5 |          0 |          3 |          8 |
+| c:\Final Project\Backend\helpers\cloudinary.js              | JavaScript |          8 |          0 |          3 |         11 |
+| c:\Final Project\Backend\helpers\url.js                     | JavaScript |          2 |          1 |          2 |          5 |
+| c:\Final Project\Backend\middleware\check-auth.js           | JavaScript |         16 |          0 |          2 |         18 |
+| c:\Final Project\Backend\middleware\file-upload.js          | JavaScript |         19 |          9 |          4 |         32 |
+| c:\Final Project\Backend\models\booking.js                  | JavaScript |          8 |          0 |          4 |         12 |
+| c:\Final Project\Backend\models\chat.js                     | JavaScript |         19 |          3 |          4 |         26 |
+| c:\Final Project\Backend\models\hall.js                     | JavaScript |         18 |          0 |          4 |         22 |
+| c:\Final Project\Backend\models\http-error.js               | JavaScript |          7 |          0 |          2 |          9 |
+| c:\Final Project\Backend\models\user.js                     | JavaScript |         14 |          0 |          4 |         18 |
+| c:\Final Project\Backend\package-lock.json                  | JSON       |      2,674 |          0 |          1 |      2,675 |
+| c:\Final Project\Backend\package.json                       | JSON       |         31 |          0 |          1 |         32 |
+| c:\Final Project\Backend\routes\booking-routes.js           | JavaScript |         13 |          3 |          8 |         24 |
+| c:\Final Project\Backend\routes\chatRoom-routes.js          | JavaScript |         18 |          0 |          9 |         27 |
+| c:\Final Project\Backend\routes\hall-routes.js              | JavaScript |         18 |          5 |         10 |         33 |
+| c:\Final Project\Backend\routes\user-routes.js              | JavaScript |         45 |          2 |         13 |         60 |
+| Total                                                       |            |      3,781 |         55 |        244 |      4,080 |
++-------------------------------------------------------------+------------+------------+------------+------------+------------+

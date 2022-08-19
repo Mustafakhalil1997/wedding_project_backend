@@ -1,0 +1,9 @@
+"filename", "language", "JavaScript", "comment", "blank", "total"
+"c:\Final Project\Backend\app.js", "JavaScript", 10, 0, 1, 11
+"c:\Final Project\Backend\controllers\booking-controller.js", "JavaScript", 0, 1, 1, 2
+"c:\Final Project\Backend\controllers\chatRoom-controller.js", "JavaScript", 86, 2, 15, 103
+"c:\Final Project\Backend\controllers\hall-controller.js", "JavaScript", 1, 0, 0, 1
+"c:\Final Project\Backend\controllers\user-controller.js", "JavaScript", 1, 0, 0, 1
+"c:\Final Project\Backend\models\chat.js", "JavaScript", 1, 1, 0, 2
+"c:\Final Project\Backend\routes\chatRoom-routes.js", "JavaScript", 4, 0, 2, 6
+"Total", "-", 103, 4, 19, 126

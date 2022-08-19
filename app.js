@@ -47,7 +47,12 @@ io.on("connection", (socket) => {
       typeof stringObjectListener
     );
     console.log(chatRoom);
-    io.emit(stringObjectListener, chatRoom, messages);
+    console.log(messages);
+    const messageWithId = {
+      chatRoom,
+      messages,
+    };
+    io.emit(stringObjectListener, messageWithId);
   });
 });
 
