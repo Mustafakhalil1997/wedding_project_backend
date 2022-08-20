@@ -46,7 +46,7 @@ router.patch("/addFavorite", addFavoriteHall);
 router.patch("/addImage/:uid", fileUpload.single("profileImage"), addImage);
 
 router.patch(
-  "/:uid",
+  "/edit/:uid",
   [
     check("firstName").not().isEmpty(),
     check("email").normalizeEmail({ gmail_remove_dots: false }).isEmail(),
