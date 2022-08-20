@@ -231,7 +231,15 @@ const editUser = async (req, res, next) => {
 
   let user;
   try {
-    user = await User.findOne({ email: email });
+    user = await User.findOne({ email: email })
+      .populate("reservation")
+      .populate({
+        path: "hallId",
+        populate: {
+          path: "bookings",
+          model: "Booking",
+        },
+      });
   } catch (err) {
     const error = new HttpError(
       "Could not update profile, please try again",
@@ -273,7 +281,7 @@ const addImage = async (req, res, next) => {
       folder: "images",
     });
   } catch (err) {
-    console.log("err ", err.message);
+    console.log("err ", err);
     const error = new HttpError("Failed to upload to cloudinary ", 500);
     return next(error);
   }
