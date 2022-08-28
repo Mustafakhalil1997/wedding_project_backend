@@ -126,7 +126,7 @@ const addImage = async (req, res, next) => {
 
   let hall;
   try {
-    hall = await Hall.findById(hallId);
+    hall = await Hall.findById(hallId).populate("bookings");
   } catch (err) {
     const error = new HttpError(
       "Could not update profile, please try again",
@@ -149,7 +149,7 @@ const addImage = async (req, res, next) => {
 
   res.status(200).json({
     message: "Image uploaded successfully",
-    newHallInfo: hall,
+    newHallInfo: hall.toObject({ getters: true }),
     newImage: public_id,
   });
 };
@@ -160,7 +160,7 @@ const deleteImages = async (req, res, next) => {
 
   let hall;
   try {
-    hall = await Hall.findById(hallId);
+    hall = await Hall.findById(hallId).populate("bookings");
   } catch (err) {
     console.log("err ", err);
     const error = new HttpError("Could not delete", 500);
@@ -195,7 +195,12 @@ const deleteImages = async (req, res, next) => {
   //   console.log("err ", err);
   // }
 
-  res.status(200).json({ message: "Photos deleted", updatedHall: hall });
+  res
+    .status(200)
+    .json({
+      message: "Photos deleted",
+      updatedHall: hall.toObject({ getters: true }),
+    });
 };
 
 module.exports = {
