@@ -39,19 +39,18 @@ io.on("connection", (socket) => {
     io.emit(stringObjectListener, messages);
   });
 
-  socket.on("newChatRoom", ({ stringObjectListener, chatRoom, messages }) => {
+  socket.on("newChatRoom", ({ stringObjectListener, messageWithId }) => {
     console.log("newChatRoom received by socket");
     console.log(
       "StringObjectListener ",
       stringObjectListener,
       typeof stringObjectListener
     );
-    console.log(chatRoom);
-    console.log(messages);
-    const messageWithId = {
-      chatRoom,
-      messages,
-    };
+    console.log("messageWithId ", messageWithId);
+    // const messageWithId = {
+    //   chatRoom,
+    //   messages,
+    // };
     io.emit(stringObjectListener, messageWithId);
   });
 });
