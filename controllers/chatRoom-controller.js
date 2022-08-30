@@ -79,10 +79,11 @@ const getHallChats = async (req, res, next) => {
 };
 
 const createChat = async (req, res, next) => {
-  const { firstMessage, userId, hallId } = req.body;
+  const { userId, hallId } = req.body;
 
   const chatRoom = new ChatRoom({
-    chats: [firstMessage],
+    // chats: [firstMessage],
+    chats: [],
     userId: userId,
     hallId: hallId,
   });
