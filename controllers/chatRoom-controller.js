@@ -189,6 +189,8 @@ const sendMessage = async (req, res, next) => {
 const getChats = async (req, res, next) => {
   const chatRoomId = req.params.roomId;
 
+  console.log("got heree");
+
   let chatRoom;
   try {
     chatRoom = await ChatRoom.aggregate([

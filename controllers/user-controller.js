@@ -86,6 +86,7 @@ const signup = async (req, res, next) => {
     favorites: [],
     hallId: null,
     reservation: null,
+    chatRooms: [],
     password: password, // to be removed later
   };
 

@@ -36,6 +36,7 @@ io.on("connection", (socket) => {
   // });
 
   socket.on("sentMessage", ({ stringObjectListener, messages }) => {
+    console.log("received by socket");
     io.emit(stringObjectListener, messages);
   });
 
