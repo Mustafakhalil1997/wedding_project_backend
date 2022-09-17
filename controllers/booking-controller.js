@@ -49,7 +49,10 @@ const createBooking = async (req, res, next) => {
   }
   console.log("existingReservation ", existingReservation);
   if (existingReservation) {
-    const error = new HttpError("This day is reserved, Choose another", 404);
+    const error = new HttpError(
+      "This day is reserved, try choosing another day",
+      404
+    );
     return next(error);
   }
 
@@ -87,6 +90,7 @@ const createBooking = async (req, res, next) => {
   res.status(200).json({
     message: "Hall booked",
     userInfo: newData,
+    newBooking: createdBooking.toObject({ getters: true }),
   });
 };
 

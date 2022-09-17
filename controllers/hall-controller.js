@@ -25,6 +25,27 @@ const getHalls = async (req, res, next) => {
   }
 };
 
+const getHall = async (req, res, next) => {
+  const { hallId } = req.body;
+
+  let hall;
+  try {
+    hall = await Hall.findById(hallId).populate("bookings");
+  } catch (err) {
+    const error = new HttpError("Could not get venue, please try again", 500);
+    return next(error);
+  }
+
+  if (!hall) {
+    const error = new HttpError("Venue doesn't exist", 404);
+    return next(error);
+  }
+
+  res
+    .status(200)
+    .json({ message: "Found venue", hall: hall.toObject({ getters: true }) });
+};
+
 const createHall = async (req, res, next) => {
   const { ownerId, hallName, email, address, location, mobileNumber, price } =
     req.body;
@@ -195,12 +216,10 @@ const deleteImages = async (req, res, next) => {
   //   console.log("err ", err);
   // }
 
-  res
-    .status(200)
-    .json({
-      message: "Photos deleted",
-      updatedHall: hall.toObject({ getters: true }),
-    });
+  res.status(200).json({
+    message: "Photos deleted",
+    updatedHall: hall.toObject({ getters: true }),
+  });
 };
 
 module.exports = {

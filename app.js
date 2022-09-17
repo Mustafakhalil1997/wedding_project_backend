@@ -35,6 +35,11 @@ io.on("connection", (socket) => {
   //   io.emit(contactId, messages);
   // });
 
+  socket.on("reservation", ({ stringObjectListener, newBooking }) => {
+    console.log("received by reservation socket");
+    io.emit(stringObjectListener, newBooking);
+  });
+
   socket.on("sentMessage", ({ stringObjectListener, messages }) => {
     console.log("received by socket");
     io.emit(stringObjectListener, messages);
