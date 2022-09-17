@@ -144,9 +144,11 @@ const createChat = async (req, res, next) => {
     },
   });
 
-  res
-    .status(200)
-    .json({ chatRoom: newChatRoom, user: user.toObject({ getters: true }) });
+  const newData = {
+    chatRooms: user.chatRooms,
+  };
+
+  res.status(200).json({ chatRoom: newChatRoom, user: newData });
 };
 
 const sendMessage = async (req, res, next) => {

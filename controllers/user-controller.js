@@ -266,8 +266,14 @@ const editUser = async (req, res, next) => {
     return next(error);
   }
 
+  const newData = {
+    firstName,
+    lastName,
+    profileImage: user.profileImage,
+  };
+
   res.status(200).json({
-    user: user.toObject({ getters: true }),
+    user: newData,
     message: "Profile Updated!",
   });
 };

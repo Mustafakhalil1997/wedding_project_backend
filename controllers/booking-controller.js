@@ -80,9 +80,13 @@ const createBooking = async (req, res, next) => {
     return next(error);
   }
 
+  const newData = {
+    reservation: user.reservation,
+  };
+
   res.status(200).json({
     message: "Hall booked",
-    userInfo: user.toObject({ getters: true }),
+    userInfo: newData,
   });
 };
 
