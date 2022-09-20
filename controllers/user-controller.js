@@ -147,17 +147,30 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
+  const {
+    id,
+    firstName,
+    lastName,
+    email: userEmail,
+    profileImage,
+    favorites,
+    hallId,
+    reservation,
+    chatRooms,
+    password: userPassword,
+  } = existingUser;
+
   const user = {
-    id: existingUser.id,
-    firstName: existingUser.firstName,
-    lastName: existingUser.lastName,
-    email: existingUser.email,
-    profileImage: existingUser.profileImage,
-    favorites: existingUser.favorites,
-    hallId: existingUser.hallId,
-    reservation: existingUser.reservation,
-    chatRooms: existingUser.chatRooms,
-    password: password, // to be removed later
+    id: id,
+    firstName: firstName,
+    lastName: lastName,
+    email: userEmail,
+    profileImage: profileImage,
+    favorites: favorites,
+    hallId: hallId,
+    reservation: reservation,
+    chatRooms: chatRooms,
+    password: userPassword, // to be removed later
   };
 
   res.status(200).json({
@@ -365,6 +378,69 @@ const addFavoriteHall = async (req, res, next) => {
   res.status(200).json({ message: "Favorite added" });
 };
 
+const changePassword = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+  console.log(currentPassword, newPassword, confirmPassword);
+
+  let existingUser;
+  try {
+    existingUser = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError("Something went wrong, Please try again", 500);
+    return next(error);
+  }
+
+  if (!existingUser) {
+    const error = new HttpError("Could not find user, Please try again", 404);
+    return next(error);
+  }
+
+  let isValidPassword = false;
+  try {
+    isValidPassword = await bcrypt.compare(
+      currentPassword,
+      existingUser.password
+    );
+  } catch (err) {
+    const error = new HttpError("Could not log you in, please try again", 500);
+    return next(error);
+  }
+
+  if (!isValidPassword) {
+    const error = new HttpError("Wrong password, please try again", 401);
+    return next(error);
+  }
+
+  existingUser.password = newPassword;
+
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(newPassword, 12); // 12 salting rounds
+  } catch (err) {
+    const error = new HttpError(
+      "Could not create user, please try again.",
+      500
+    );
+    return next(error);
+  }
+
+  existingUser.password = hashedPassword;
+
+  try {
+    existingUser.save();
+  } catch (err) {
+    const error = new HttpError(
+      "Something Went Wrong, Could not change Password",
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ message: "Password Changed" });
+};
+
 const getUsersByIds = async (req, res, next) => {
   const userIds = req.body;
 
@@ -401,5 +477,6 @@ module.exports = {
   addImage,
   addFavoriteHall,
   getUsersByIds,
+  changePassword,
   forgotPassword,
 };

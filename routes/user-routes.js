@@ -8,6 +8,7 @@ const {
   addFavoriteHall,
   getUsersByIds,
   forgotPassword,
+  changePassword,
 } = require("../controllers/user-controller");
 const checkAuth = require("../middleware/check-auth");
 const fileUpload = require("../middleware/file-upload");
@@ -44,6 +45,8 @@ router.post("/users", getUsersByIds);
 router.patch("/addFavorite", addFavoriteHall);
 
 router.patch("/addImage/:uid", fileUpload.single("profileImage"), addImage);
+
+router.patch("/changePassword/:uid", changePassword);
 
 router.patch(
   "/edit/:uid",
