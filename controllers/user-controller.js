@@ -404,7 +404,7 @@ const changePassword = async (req, res, next) => {
       existingUser.password
     );
   } catch (err) {
-    const error = new HttpError("Could not log you in, please try again", 500);
+    const error = new HttpError("Something went wrong, please try again", 500);
     return next(error);
   }
 
