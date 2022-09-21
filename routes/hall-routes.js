@@ -18,9 +18,9 @@ const router = express.Router();
 
 // router.use(checkAuth);
 
-router.get("/", getHalls);
-
 router.get("/halls/:uid", findHallByUserId);
+
+router.get("/:count/:filter?", getHalls);
 
 router.post("/createHall", createHall);
 
