@@ -6,13 +6,21 @@ const mongoose = require("mongoose");
 const { cloudinary } = require("../helpers/cloudinary");
 
 const getHalls = async (req, res, next) => {
+  const count = req.params.count;
+
+  console.log("count ", count);
   let halls;
   try {
-    halls = await Hall.find().populate("bookings");
+    halls = await Hall.find()
+      .populate("bookings")
+      .skip(2 * (count - 1))
+      .limit(2);
     if (!halls) {
       const error = new HttpError("Could not find halls", 404);
       return next(error);
     }
+
+    console.log("halls ", halls);
 
     const newHalls = halls.map((hall) => {
       return hall.toObject({ getters: true });
