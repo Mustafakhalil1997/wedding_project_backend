@@ -20,7 +20,7 @@ const router = express.Router();
 
 router.get("/halls/:uid", findHallByUserId);
 
-router.get("/:count/:filter?", getHalls);
+router.get("/:count/:filters?", getHalls);
 
 router.post("/createHall", createHall);
 

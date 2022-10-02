@@ -4,17 +4,37 @@ const User = require("../models/user");
 const HttpError = require("../models/http-error");
 const mongoose = require("mongoose");
 const { cloudinary } = require("../helpers/cloudinary");
+const { fillData } = require("../helpers/fillRandomData");
 
 const getHalls = async (req, res, next) => {
   const count = req.params.count;
+  let filters = req.params.filters;
 
   console.log("count ", count);
+  console.log("filter ", filters);
+  // console.log(filters[0]);
+  if (!filters) filters = [];
+
+  let priceRange;
+  if (filters.includes(1)) priceRange = { $lte: 10 };
+  if (filters.includes(2))
+    priceRange = priceRange ? { $lte: 20 } : { $gte: 10, $lte: 20 };
+  if (filters.includes(3))
+    priceRange = priceRange ? { $lte: 30 } : { $gte: 20 };
+
   let halls;
   try {
-    halls = await Hall.find()
-      .populate("bookings")
-      .skip(2 * (count - 1))
-      .limit(2);
+    if (priceRange)
+      halls = await Hall.find({ price: priceRange })
+        .populate("bookings")
+        .skip(10 * (count - 1))
+        .limit(10);
+    else
+      halls = await Hall.find()
+        .populate("bookings")
+        .skip(10 * (count - 1))
+        .limit(10);
+
     if (!halls) {
       const error = new HttpError("Could not find halls", 404);
       return next(error);
