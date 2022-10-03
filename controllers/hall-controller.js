@@ -250,6 +250,8 @@ const deleteImages = async (req, res, next) => {
   });
 };
 
+// fillData()
+
 module.exports = {
   createHall,
   findHallByUserId,
