@@ -28,35 +28,15 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 
 io.on("connection", (socket) => {
-  // socket.on("sentMessage", ({ contactId, messages }) => {
-  //   console.log("contactId ", contactId);
-  //   console.log("message received and sent by the server", messages);
-  //   console.log("type of message in the server ", typeof messages);
-  //   io.emit(contactId, messages);
-  // });
-
   socket.on("reservation", ({ stringObjectListener, newBooking }) => {
-    console.log("received by reservation socket");
     io.emit(stringObjectListener, newBooking);
   });
 
   socket.on("sentMessage", ({ stringObjectListener, messages }) => {
-    console.log("received by socket");
     io.emit(stringObjectListener, messages);
   });
 
   socket.on("newChatRoom", ({ stringObjectListener, messageWithId }) => {
-    console.log("newChatRoom received by socket");
-    console.log(
-      "StringObjectListener ",
-      stringObjectListener,
-      typeof stringObjectListener
-    );
-    console.log("messageWithId ", messageWithId);
-    // const messageWithId = {
-    //   chatRoom,
-    //   messages,
-    // };
     io.emit(stringObjectListener, messageWithId);
   });
 });
