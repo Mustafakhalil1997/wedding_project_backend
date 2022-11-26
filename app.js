@@ -27,18 +27,18 @@ app.use(cors());
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+const socketCb = (key, socket) => {
+  return socket.on(key, (cbObject) => {
+    const stringObjectListener = Object.values(cbObject)[0];
+    const data = Object.values(cbObject)[1];
+    io.emit(stringObjectListener, data);
+  });
+};
+
 io.on("connection", (socket) => {
-  socket.on("reservation", ({ stringObjectListener, newBooking }) => {
-    io.emit(stringObjectListener, newBooking);
-  });
-
-  socket.on("sentMessage", ({ stringObjectListener, messages }) => {
-    io.emit(stringObjectListener, messages);
-  });
-
-  socket.on("newChatRoom", ({ stringObjectListener, messageWithId }) => {
-    io.emit(stringObjectListener, messageWithId);
-  });
+  socketCb("reservation", socket);
+  socketCb("sentMessage", socket);
+  socketCb("newChatRoom", socket);
 });
 
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
