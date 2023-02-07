@@ -9,7 +9,7 @@ const {
   getUsersByIds,
   forgotPassword,
   changePassword,
-} = require("../controllers/user-controller");
+} = require("../controllers/user.controller");
 const checkAuth = require("../middleware/check-auth");
 const fileUpload = require("../middleware/file-upload");
 

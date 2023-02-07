@@ -5,100 +5,42 @@ const HttpError = require("../models/http-error");
 const mongoose = require("mongoose");
 const nodemailer = require("nodemailer");
 const { cloudinary } = require("../helpers/cloudinary");
+const {
+  handleValidationErrors,
+  doesUserExist,
+  generateHashedPassword,
+  saveUser,
+  generateToken,
+  createUser,
+} = require("../helpers/user.service");
+
+const configs = require("../helpers/user.config");
 
 const User = require("../models/user");
+const promiseHandler = require("../lib/promiseHandler");
 
-const signup = async (req, res, next) => {
-  const errors = validationResult(req);
-  console.log("reached signup");
-  if (!errors.isEmpty()) {
-    console.log("errors ", errors);
-    return next(
-      new HttpError("Invalid inputs passed, please check your data", 422)
-    );
-  }
-
-  console.log("req.body ", req.body);
-
-  const { firstName, lastName, email, password, profileImage } = req.body;
-
-  let existingUser;
-  try {
-    existingUser = await User.findOne({ email: email });
-  } catch (err) {
-    const error = new HttpError("Could not sign you up, please try again", 500);
-    return next(error);
-  }
-  console.log("existing user ", existingUser);
-
-  if (existingUser) {
-    const error = new HttpError("User already exists, try logging in", 404);
-    return next(error);
-  }
-
-  let hashedPassword;
-  try {
-    hashedPassword = await bcrypt.hash(password, 12); // 12 salting rounds
-  } catch (err) {
-    const error = new HttpError(
-      "Could not create user, please try again.",
-      500
-    );
-    return next(error);
-  }
-  const createdUser = new User({
-    firstName,
-    lastName,
-    email,
-    password: hashedPassword,
-    profileImage,
-    favorites: [],
-    hallId: null,
-    reservation: null,
-    chatRooms: [],
-  });
-
-  try {
-    await createdUser.save();
-  } catch (err) {
-    const error = new HttpError("Signing up failed, please try again.", 500);
-    return next(error);
-  }
-  console.log("user Created");
-  let token;
-  try {
-    token = jwt.sign(
-      { userId: createdUser.id, email: createdUser.email },
-      "super_secret_dont_share",
-      { expiresIn: "1h" }
-    );
-  } catch (err) {
-    const error = new HttpError("Signing up failed, please try again.", 500);
-    return next(error);
-  }
-
-  const user = {
-    id: createdUser.id,
-    firstName,
-    lastName,
-    email,
-    profileImage,
-    favorites: [],
-    hallId: null,
-    reservation: null,
-    chatRooms: [],
-    password: password, // to be removed later
-  };
-
-  res.status(200).json({ userInfo: user, token: token, message: "signed up" });
-};
-
-const login = async (req, res, next) => {
+const signup = promiseHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
-  let existingUser;
+  handleValidationErrors(req);
+  await doesUserExist(email);
+  const hashedPassword = await generateHashedPassword(password);
+  const createdUser = createUser(req, hashedPassword);
+  await saveUser(createdUser);
+  const token = generateToken();
+
+  res.status(200).json({
+    userInfo: createdUser.toObject({ getters: true }),
+    token: token,
+    message: "signed up",
+  });
+}, configs);
+
+/////////////////////
+
+const fetchUser = async () => {
   try {
-    existingUser = await User.findOne({ email: email })
+    const existingUser = await User.findOne({ email: email })
       .populate("reservation")
       .populate({
         path: "hallId",
@@ -107,81 +49,51 @@ const login = async (req, res, next) => {
           model: "Booking",
         },
       });
-    console.log("existingUser ", existingUser);
+    return existingUser;
   } catch (err) {
-    console.log(err);
-    const error = new HttpError(
-      "Logging in failed, please try again later",
-      500
-    );
-    return next(error);
+    const error = new HttpError("Logging in failed, please try again later", 500);
+    throw error;
   }
+};
 
-  if (!existingUser) {
-    const error = new HttpError("Email does not exist, try signing up", 404);
-    return next(error);
-  }
-
+const arePasswordsIdentical = async (receivedPassword, actualPassword) => {
   let isValidPassword = false;
   try {
-    isValidPassword = await bcrypt.compare(password, existingUser.password);
+    isValidPassword = await bcrypt.compare(receivedPassword, actualPassword);
   } catch (err) {
     const error = new HttpError("Could not log you in, please try again", 500);
-    return next(error);
+    throw error;
   }
 
   if (!isValidPassword) {
     const error = new HttpError("Wrong password, please try again", 401);
-    return next(error);
+    throw error;
   }
+};
 
+const login = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  let existingUser;
   let token;
   try {
-    token = jwt.sign(
-      { userId: existingUser.id, email: existingUser.email },
-      "super_secret_dont_share",
-      { expiresIn: "1h" }
-    );
-  } catch (err) {
-    const error = new HttpError("Signing up failed, please try again.t", 500);
+    await checkIfUserExists(email);
+    existingUser = await fetchUser(email);
+    await arePasswordsIdentical(password, existingUser.password);
+    token = generateToken();
+  } catch (error) {
     return next(error);
   }
-
-  const {
-    id,
-    firstName,
-    lastName,
-    email: userEmail,
-    profileImage,
-    favorites,
-    hallId,
-    reservation,
-    chatRooms,
-    password: userPassword,
-  } = existingUser;
-
-  const user = {
-    id: id,
-    firstName: firstName,
-    lastName: lastName,
-    email: userEmail,
-    profileImage: profileImage,
-    favorites: favorites,
-    hallId: hallId,
-    reservation: reservation,
-    chatRooms: chatRooms,
-    password: userPassword, // to be removed later
-  };
 
   res.status(200).json({
     message: `logged in with ${email}`,
-    userInfo: user,
-    hallInfo: existingUser.hallId
-      ? existingUser.hallId.toObject({ getters: true })
-      : null,
+    userInfo: existingUser.toObject({ getters: true }),
+    hallInfo: existingUser.hallId ? existingUser.hallId.toObject({ getters: true }) : null,
     token: token,
   });
 };
+
+////////////////////////////
 
 const GMAIL_PASS = process.env.GMAIL_PASS;
 // testing
@@ -227,9 +139,7 @@ const editUser = async (req, res, next) => {
   console.log("errors ", errors);
 
   if (!errors.isEmpty()) {
-    return next(
-      new HttpError("Invalid inputs passed, please check your data", 422)
-    );
+    return next(new HttpError("Invalid inputs passed, please check your data", 422));
   }
   const userId = req.params.uid;
   console.log("req.bdoy ", req.body);
@@ -255,10 +165,7 @@ const editUser = async (req, res, next) => {
         },
       });
   } catch (err) {
-    const error = new HttpError(
-      "Could not update profile, please try again",
-      500
-    );
+    const error = new HttpError("Could not update profile, please try again", 500);
     return next(error);
   }
 
@@ -272,10 +179,7 @@ const editUser = async (req, res, next) => {
   try {
     await user.save();
   } catch (err) {
-    const error = new HttpError(
-      "Something went wrong, could not update profile ",
-      500
-    );
+    const error = new HttpError("Something went wrong, could not update profile ", 500);
     return next(error);
   }
 
@@ -314,10 +218,7 @@ const addImage = async (req, res, next) => {
   try {
     user = await User.findById(userId);
   } catch (err) {
-    const error = new HttpError(
-      "Could not update profile, please try again",
-      500
-    );
+    const error = new HttpError("Could not update profile, please try again", 500);
     return next(error);
   }
   user.profileImage = public_id;
@@ -325,10 +226,7 @@ const addImage = async (req, res, next) => {
   try {
     await user.save();
   } catch (err) {
-    const error = new HttpError(
-      "Could not update profile, please try again",
-      500
-    );
+    const error = new HttpError("Could not update profile, please try again", 500);
     return next(error);
   }
 
@@ -344,10 +242,7 @@ const addFavoriteHall = async (req, res, next) => {
     user = await User.findById(userId);
     console.log("found user ", user);
   } catch (err) {
-    const error = new HttpError(
-      "Could not add favorite, please try again",
-      500
-    );
+    const error = new HttpError("Could not add favorite, please try again", 500);
     return next(error);
   }
 
@@ -358,9 +253,7 @@ const addFavoriteHall = async (req, res, next) => {
     console.log("newHallId ", newHallId);
     user.favorites.push(newHallId);
   } else {
-    const newFavorites = user.favorites.filter(
-      (id) => id.toString() !== hallId
-    );
+    const newFavorites = user.favorites.filter((id) => id.toString() !== hallId);
     console.log("newFavoritess ", newFavorites);
     user.favorites = newFavorites;
   }
@@ -399,10 +292,7 @@ const changePassword = async (req, res, next) => {
 
   let isValidPassword = false;
   try {
-    isValidPassword = await bcrypt.compare(
-      currentPassword,
-      existingUser.password
-    );
+    isValidPassword = await bcrypt.compare(currentPassword, existingUser.password);
   } catch (err) {
     const error = new HttpError("Something went wrong, please try again", 500);
     return next(error);
@@ -419,10 +309,7 @@ const changePassword = async (req, res, next) => {
   try {
     hashedPassword = await bcrypt.hash(newPassword, 12); // 12 salting rounds
   } catch (err) {
-    const error = new HttpError(
-      "Could not create user, please try again.",
-      500
-    );
+    const error = new HttpError("Could not create user, please try again.", 500);
     return next(error);
   }
 
@@ -431,10 +318,7 @@ const changePassword = async (req, res, next) => {
   try {
     existingUser.save();
   } catch (err) {
-    const error = new HttpError(
-      "Something Went Wrong, Could not change Password",
-      500
-    );
+    const error = new HttpError("Something Went Wrong, Could not change Password", 500);
     return next(error);
   }
 
