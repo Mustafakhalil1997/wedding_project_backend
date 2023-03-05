@@ -17,7 +17,7 @@ const errors = {
   userExists: {
     key: "UserExists",
     code: 400,
-    message: { en: "Email already exists" },
+    message: { en: "User already exists, try logging in" },
   },
   tokenExpired: {
     key: "TokenExpired",
@@ -28,6 +28,13 @@ const errors = {
     key: "InvalidToken",
     code: 400,
     message: { en: "Your token is invalid" },
+  },
+  invalidData: {
+    key: "InvalidData",
+    code: 422,
+    message: {
+      en: "Invalid inputs passed, please check your data",
+    },
   },
   tokenRedeemed: {
     key: "TokenRedeemed",

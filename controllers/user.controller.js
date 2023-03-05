@@ -12,12 +12,15 @@ const {
   saveUser,
   generateToken,
   createUser,
+  arePasswordsIdentical,
+  fetchUser,
 } = require("../helpers/user.service");
 
 const configs = require("../helpers/user.config");
 
 const User = require("../models/user");
 const promiseHandler = require("../lib/promiseHandler");
+const { GMAIL_PASS } = require("../config");
 
 const signup = promiseHandler(async (req, res, next) => {
   const { email, password } = req.body;
@@ -27,7 +30,7 @@ const signup = promiseHandler(async (req, res, next) => {
   const hashedPassword = await generateHashedPassword(password);
   const createdUser = createUser(req, hashedPassword);
   await saveUser(createdUser);
-  const token = generateToken();
+  const token = generateToken(createdUser);
 
   res.status(200).json({
     userInfo: createdUser.toObject({ getters: true }),
@@ -38,52 +41,12 @@ const signup = promiseHandler(async (req, res, next) => {
 
 /////////////////////
 
-const fetchUser = async () => {
-  try {
-    const existingUser = await User.findOne({ email: email })
-      .populate("reservation")
-      .populate({
-        path: "hallId",
-        populate: {
-          path: "bookings",
-          model: "Booking",
-        },
-      });
-    return existingUser;
-  } catch (err) {
-    const error = new HttpError("Logging in failed, please try again later", 500);
-    throw error;
-  }
-};
-
-const arePasswordsIdentical = async (receivedPassword, actualPassword) => {
-  let isValidPassword = false;
-  try {
-    isValidPassword = await bcrypt.compare(receivedPassword, actualPassword);
-  } catch (err) {
-    const error = new HttpError("Could not log you in, please try again", 500);
-    throw error;
-  }
-
-  if (!isValidPassword) {
-    const error = new HttpError("Wrong password, please try again", 401);
-    throw error;
-  }
-};
-
-const login = async (req, res, next) => {
+const login = promiseHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
-  let existingUser;
-  let token;
-  try {
-    await checkIfUserExists(email);
-    existingUser = await fetchUser(email);
-    await arePasswordsIdentical(password, existingUser.password);
-    token = generateToken();
-  } catch (error) {
-    return next(error);
-  }
+  const existingUser = await fetchUser(email);
+  await arePasswordsIdentical(password, existingUser.password);
+  const token = await generateToken(existingUser);
 
   res.status(200).json({
     message: `logged in with ${email}`,
@@ -91,11 +54,10 @@ const login = async (req, res, next) => {
     hallInfo: existingUser.hallId ? existingUser.hallId.toObject({ getters: true }) : null,
     token: token,
   });
-};
+}, configs);
 
 ////////////////////////////
 
-const GMAIL_PASS = process.env.GMAIL_PASS;
 // testing
 const forgotPassword = async (req, res, next) => {
   try {
@@ -133,48 +95,17 @@ const forgotPassword = async (req, res, next) => {
   }
 };
 
-const editUser = async (req, res, next) => {
+const editUser = promiseHandler(async (req, res, next) => {
   const errors = validationResult(req);
-  console.log("reached signup");
-  console.log("errors ", errors);
 
-  if (!errors.isEmpty()) {
-    return next(new HttpError("Invalid inputs passed, please check your data", 422));
-  }
+  if (!errors.isEmpty()) throw new Error(configs.errors.invalidData.key);
+
   const userId = req.params.uid;
-  console.log("req.bdoy ", req.body);
-  const {
-    firstName,
-    lastName,
-    email,
-    // profileImage,
-    // favorites,
-    // hallId,
-    // booking,
-  } = req.body;
+  const { firstName, lastName, email } = req.body;
 
-  let user;
-  try {
-    user = await User.findOne({ email: email })
-      .populate("reservation")
-      .populate({
-        path: "hallId",
-        populate: {
-          path: "bookings",
-          model: "Booking",
-        },
-      });
-  } catch (err) {
-    const error = new HttpError("Could not update profile, please try again", 500);
-    return next(error);
-  }
-
+  const user = await fetchUser(email);
   user.firstName = firstName;
   user.lastName = lastName;
-  // if (req.file && req.file.path) {
-  //   user.profileImage = req.file.path;
-  // }
-  console.log("user ", user);
 
   try {
     await user.save();
@@ -193,7 +124,7 @@ const editUser = async (req, res, next) => {
     user: newData,
     message: "Profile Updated!",
   });
-};
+}, configs);
 
 const addImage = async (req, res, next) => {
   const userId = req.params.uid;

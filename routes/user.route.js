@@ -10,6 +10,11 @@ const {
   forgotPassword,
   changePassword,
 } = require("../controllers/user.controller");
+const {
+  signupValidation,
+  loginValidation,
+  editValidation,
+} = require("../middleware/user.validation");
 const checkAuth = require("../middleware/check-auth");
 const fileUpload = require("../middleware/file-upload");
 
@@ -19,43 +24,17 @@ router.get("/", (req, res, next) => {
   res.json({ mssg: "This is user route, it works" });
 });
 
-router.post(
-  "/signup",
-  [
-    check("firstName").not().isEmpty(),
-    check("email").normalizeEmail({ gmail_remove_dots: false }).isEmail(),
-    // check("profileImage").not().isEmpty(),
-    check("password").isLength({ min: 7 }),
-  ],
-  signup
-);
-
-router.post(
-  "/login",
-  [check("email").normalizeEmail({ gmail_remove_dots: false }).isEmail()],
-  login
-);
-
+router.post("/signup", signupValidation, signup);
+router.post("/login", loginValidation, login);
 router.patch("/forgotPassword", forgotPassword);
 
 router.use(checkAuth);
 
 router.post("/users", getUsersByIds);
-
 router.patch("/addFavorite", addFavoriteHall);
-
 router.patch("/addImage/:uid", fileUpload.single("profileImage"), addImage);
-
 router.patch("/changePassword/:uid", changePassword);
-
-router.patch(
-  "/edit/:uid",
-  [
-    check("firstName").not().isEmpty(),
-    check("email").normalizeEmail({ gmail_remove_dots: false }).isEmail(),
-  ],
-  editUser
-);
+router.patch("/edit/:uid", editValidation, editUser);
 
 // router.get("/", (req, res, next) => {});
 
